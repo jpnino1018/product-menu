@@ -50,3 +50,6 @@ next-env.d.ts
 /prisma/seed.js
 /prisma/seed.ts
 /prisma/seed.js.map
+
+# pictures
+/public/uploads
