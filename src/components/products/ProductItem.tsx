@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function ProductItem({ product }: { product: { id: number; name: string; price: number; image?: string | null } }) {
   const router = useRouter();
@@ -30,6 +31,9 @@ export function ProductItem({ product }: { product: { id: number; name: string; 
       <button onClick={handleDelete} className="text-red-600 hover:underline mt-2">
         Eliminar
       </button>
+      <Link href={`/edit/${product.id}`} className="text-blue-500 hover:underline mb-4 inline-block">
+        Editar
+      </Link>
     </li>
   );
 }

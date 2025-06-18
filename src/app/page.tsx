@@ -12,6 +12,12 @@ export default async function HomePage() {
       <Link href="/new" className="text-blue-500 hover:underline mb-4 inline-block">
         Agregar Nuevo Producto
       </Link>
+      <Link href="/categories/new" className="text-blue-500 hover:underline mb-4 inline-block">
+        Agregar Nueva Categoría
+      </Link>
+      <Link href="/brands/new" className="text-blue-500 hover:underline mb-4 inline-block">
+        Agregar Nueva Marca
+      </Link>
       <p className="mb-4">Total de productos: {products.length}</p>
       <ul className="space-y-2">
         {products.map((product) => (
