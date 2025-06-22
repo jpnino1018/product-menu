@@ -2,8 +2,17 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-export function ProductItem({ product }: { product: { id: number; name: string; price: number; image?: string | null } }) {
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  image?: string | null;
+};
+
+export function ProductItem({ product }: { product: Product }) {
   const router = useRouter();
 
   const handleDelete = async () => {
@@ -15,25 +24,31 @@ export function ProductItem({ product }: { product: { id: number; name: string; 
     });
 
     if (res.ok) {
-      router.refresh(); // recarga sin salir de la página
+      router.refresh();
     } else {
       alert('Error al eliminar producto');
     }
   };
 
   return (
-    <li className="border p-4 rounded">
-      <p className="font-semibold">{product.name}</p>
-      <p>${product.price.toLocaleString('es-CO')}</p>
-      {product.image && (
-        <img src={product.image} alt={product.name} className="w-24 mt-2" />
-      )}
-      <button onClick={handleDelete} className="text-red-600 hover:underline mt-2">
-        Eliminar
-      </button>
-      <Link href={`/edit/${product.id}`} className="text-blue-500 hover:underline mb-4 inline-block">
-        Editar
-      </Link>
-    </li>
+    <Card className="w-full">
+      <CardHeader>
+        <h3 className="text-lg font-semibold">{product.name}</h3>
+        <p className="text-muted-foreground">${product.price.toLocaleString('es-CO')}</p>
+      </CardHeader>
+      <CardContent>
+        {product.image && (
+          <img src={product.image} alt={product.name} className="w-24 h-24 object-cover rounded" />
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button variant="destructive" onClick={handleDelete}>
+          Eliminar
+        </Button>
+        <Link href={`/edit/${product.id}`}>
+          <Button variant="outline">Editar</Button>
+        </Link>
+      </CardFooter>
+    </Card>
   );
 }

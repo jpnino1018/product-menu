@@ -11,28 +11,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Category {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  brands  Brand[] // Relación 1:N con Brand
+  products Product[]
+}
+
+model Brand {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  products   Product[]
+}
+
 model Product {
   id         Int      @id @default(autoincrement())
   name       String
   price      Float
   image      String?
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
   brand      Brand    @relation(fields: [brandId], references: [id])
   brandId    Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model Category {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  products  Product[]
-}
-
-model Brand {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  products  Product[]
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
 }
 

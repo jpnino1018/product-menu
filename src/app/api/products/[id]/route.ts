@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma';
 import path from 'path';
 import fs from 'fs/promises';
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
-  const id = parseInt(context.params.id);
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
@@ -35,6 +35,7 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
     return NextResponse.json({ error: 'Error interno' }, { status: 500 });
   }
 }
+
 
 export async function GET(req: NextRequest, context: { params: { id: string } }) {
   const id = parseInt(context.params.id);

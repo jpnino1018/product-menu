@@ -34,18 +34,29 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchOptions = async () => {
-      const [catRes, brandRes] = await Promise.all([
-        fetch('/api/categories'),
-        fetch('/api/brands'),
-      ]);
-      const categories = await catRes.json();
-      const brands = await brandRes.json();
-      setCategories(categories);
-      setBrands(brands);
+    const fetchCategories = async () => {
+      const res = await fetch('/api/categories');
+      const data = await res.json();
+      setCategories(data);
     };
-    fetchOptions();
+    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (!categoryId) {
+      setBrands([]);
+      setBrandId('');
+      return;
+    }
+
+    const fetchBrands = async () => {
+      const res = await fetch(`/api/brands/by-category/${categoryId}`);
+      const data = await res.json();
+      setBrands(data);
+    };
+    fetchBrands();
+  }, [categoryId]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,6 +150,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
           onChange={(e) => setBrandId(e.target.value)}
           required
           className="w-full border px-3 py-2 rounded"
+          disabled={!brands.length}
         >
           <option value="">Selecciona una marca</option>
           {brands.map((brand) => (
