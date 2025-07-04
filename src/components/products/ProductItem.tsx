@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreVertical } from 'lucide-react';
+import { useCurrentUser } from '@/hooks/UseCurrentUser';
 
 export function ProductItem({
   product,
@@ -27,6 +28,7 @@ export function ProductItem({
   };
 }) {
   const router = useRouter();
+  const { isAdmin, loadingAdmin } = useCurrentUser();
 
   const handleDelete = async () => {
     const confirmDelete = confirm(`¿Eliminar "${product.name}"?`);
@@ -44,43 +46,48 @@ export function ProductItem({
   };
 
   return (
-    <Card className="flex flex-col md:flex-row items-center justify-between p-4 gap-4">
-      {/* Info del producto */}
-      <div className="flex-1 w-full">
-        <p className="text-lg font-semibold">{product.name}</p>
-        <p className="text-muted-foreground mb-2">
-          ${product.price.toLocaleString('es-CO')}
-        </p>
-      </div>
-
-      {/* Imagen */}
+    <Card className="relative w-full max-w-xs mx-auto shadow-md border rounded-lg overflow-hidden">
+      {/* Imagen principal */}
       {product.image && (
-        <div className="relative w-32 h-32 flex-shrink-0 border rounded overflow-hidden bg-white">
+        <div className="relative w-full h-48 bg-white">
           <Image
             src={product.image}
             alt={product.name}
-            layout="fill"
-            objectFit="contain"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"
+            className="object-contain"
           />
         </div>
       )}
 
-      {/* Dropdown de acciones */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <MoreVertical className="h-5 w-5" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <Link href={`/edit/${product.id}`}>
-            <DropdownMenuItem>Editar</DropdownMenuItem>
-          </Link>
-          <DropdownMenuItem onClick={handleDelete} className="text-red-600">
-            Eliminar
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* Info del producto */}
+      <CardContent className="p-4 text-center">
+        <p className="text-md font-semibold mb-1">{product.name}</p>
+        <p className="text-muted-foreground text-sm">
+          ${product.price.toLocaleString('es-CO')}
+        </p>
+      </CardContent>
+
+      {/* Dropdown admin */}
+      {!loadingAdmin && isAdmin && (
+        <div className="absolute top-2 right-2 z-10">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <Link href={`/edit/${product.id}`}>
+                <DropdownMenuItem>Editar</DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+                Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
     </Card>
   );
 }

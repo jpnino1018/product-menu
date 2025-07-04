@@ -1,15 +1,7 @@
 // src/app/page.tsx
 import { prisma } from '@/lib/prisma';
-import Link from 'next/link';
 import ProductListWithFilters from '@/components/products/ProductList';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Settings } from 'lucide-react';
+import Image from 'next/image';
 
 export default async function HomePage() {
   const [products, categories, brands] = await Promise.all([
@@ -24,7 +16,13 @@ export default async function HomePage() {
   return (
     <main className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Inventario de Licores</h1>
+        <Image
+          src="/licores-mercastillosf.png"
+          alt="Logo Mercastillo"
+          width={150}      
+          height={40}
+          priority
+        />
       </div>
 
       <p className="mb-4">Total de productos: {products.length}</p>

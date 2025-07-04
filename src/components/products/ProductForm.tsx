@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { uploadImage, getPublicUrl } from '@/lib/supabase/storage';
+import { useCurrentUser } from '@/hooks/UseCurrentUser';
+import Unauthorized from '@/components/common/unauthorized';
 
 type ProductFormProps = {
   initialData?: {
@@ -22,7 +25,7 @@ type Option = {
 
 export default function ProductForm({ initialData, isEdit = false }: ProductFormProps) {
   const router = useRouter();
-
+  const { isAdmin, loadingAdmin } = useCurrentUser();
   const [name, setName] = useState(initialData?.name || '');
   const [price, setPrice] = useState(initialData?.price.toString() || '');
   const [file, setFile] = useState<File | null>(null);
@@ -58,51 +61,53 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
   }, [categoryId]);
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoading(true);
 
-    let imageUrl = imagePreview;
+      let imageUrl = imagePreview;
 
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
+      if (file) {
+        const uploadedPath = await uploadImage(file);
+        if (!uploadedPath) {
+          alert('Error al subir la imagen');
+          setLoading(false);
+          return;
+        }
 
-      const uploadRes = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
+        imageUrl = getPublicUrl(uploadedPath);
+      }
+      const method = isEdit ? 'PUT' : 'POST';
+      const endpoint = isEdit ? `/api/products/${initialData?.id}` : '/api/products';
+
+      const res = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          price: parseFloat(price),
+          image: imageUrl,
+          categoryId: parseInt(categoryId),
+          brandId: parseInt(brandId),
+        }),
       });
 
-      const data = await uploadRes.json();
-      imageUrl = data.url;
-    }
+      if (res.ok) {
+        router.push('/');
+      } else {
+        alert('Error al guardar el producto');
+      }
 
-    const method = isEdit ? 'PUT' : 'POST';
-    const endpoint = isEdit ? `/api/products/${initialData?.id}` : '/api/products';
+      setLoading(false);
+    };
 
-    const res = await fetch(endpoint, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        price: parseFloat(price),
-        image: imageUrl,
-        categoryId: parseInt(categoryId),
-        brandId: parseInt(brandId),
-      }),
-    });
-
-    if (res.ok) {
-      router.push('/');
-    } else {
-      alert('Error al guardar el producto');
-    }
-
-    setLoading(false);
-  };
+    if (loadingAdmin) return null;
+    if (!isAdmin) return <Unauthorized />;
 
   return (
+    
     <form onSubmit={handleSubmit} className="space-y-4">
+      <h1 className="text-2xl font-bold mb-4">Nuevo Producto</h1>
       <div>
         <label className="block font-medium">Nombre</label>
         <input

@@ -3,10 +3,14 @@
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun } from 'lucide-react';
+import { useIsClient } from '@/hooks/UseIsClient';
+
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-
+  const isClient = useIsClient();
+  
+  if (!isClient) return null;
   return (
     <Button
       variant="ghost"

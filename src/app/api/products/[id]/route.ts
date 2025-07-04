@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import path from 'path';
-import fs from 'fs/promises';
+import { deleteImage } from '@/lib/supabase/storage';
+import { isAdminRequest } from '@/lib/auth';
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   const id = parseInt(params.id);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+  }
+
+  if (!isAdminRequest()) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
   }
 
   try {
@@ -17,13 +21,12 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 });
     }
 
-    if (product.image && product.image.startsWith('/uploads/')) {
-      const imagePath = path.join(process.cwd(), 'public', product.image);
-      try {
-        await fs.unlink(imagePath);
-        console.log(`Imagen eliminada: ${imagePath}`);
-      } catch (err) {
-        console.warn(`No se pudo borrar la imagen: ${imagePath}`, err);
+    if (product.image) {
+      const deleted = await deleteImage(product.image);
+      if (deleted) {
+        console.log(`Imagen eliminada en Supabase: ${product.image}`);
+      } else {
+        console.warn(`No se pudo eliminar la imagen de Supabase`);
       }
     }
 
@@ -63,7 +66,9 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
   }
-
+  if (!isAdminRequest()) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
   const { name, price, image, categoryId, brandId } = await req.json();
 
   if (!name || !price || !categoryId || !brandId) {
@@ -81,12 +86,11 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
     const isImageUpdated = image && image !== oldImage;
 
     if (oldImage && isImageUpdated) {
-      const imagePath = path.join(process.cwd(), 'public', oldImage.replace(/^\/uploads\//, 'uploads/'));
-      try {
-        await fs.unlink(imagePath);
-        console.log(`Imagen antigua eliminada: ${imagePath}`);
-      } catch (err) {
-        console.warn(`No se pudo eliminar la imagen anterior: ${err}`);
+      const deleted = await deleteImage(oldImage);
+      if (deleted) {
+        console.log(`Imagen anterior eliminada en Supabase: ${oldImage}`);
+      } else {
+        console.warn(`No se pudo eliminar la imagen anterior de Supabase`);
       }
     }
 

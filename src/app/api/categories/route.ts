@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isAdminRequest } from '@/lib/auth';
 
 export async function POST(req: Request) {
+  if (!isAdminRequest()) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
+
   const { name } = await req.json();
 
   if (!name || typeof name !== 'string') {

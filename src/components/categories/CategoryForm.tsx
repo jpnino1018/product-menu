@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCurrentUser } from '@/hooks/UseCurrentUser';
+import Unauthorized from '@/components/common/unauthorized';
 
 export default function CategoryForm() {
+  const { isAdmin, loadingAdmin } = useCurrentUser();
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -27,8 +30,14 @@ export default function CategoryForm() {
     setLoading(false);
   };
 
+  if (loadingAdmin) return null;
+  if (!isAdmin) {
+    return <Unauthorized />;
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <h1 className="text-2xl font-bold mb-4">Nueva Categoría</h1>
       <div>
         <label className="block font-medium">Nombre</label>
         <input

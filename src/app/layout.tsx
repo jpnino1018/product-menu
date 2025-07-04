@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Inventario de Licores',
-  description: 'Sistema de gestión de productos de licor',
+  title: 'Mercastillo Licores',
+  description: 'Tienda de licores y bebidas alcohólicas',
 };
 
 export default function RootLayout({

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isAdminRequest } from '@/lib/auth';
 
 export async function GET() {
   const products = await prisma.product.findMany({
@@ -13,6 +14,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!isAdminRequest()) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
   try {
     const body = await req.json();
     const { name, price, image, categoryId, brandId } = body;

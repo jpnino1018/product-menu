@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCurrentUser } from '@/hooks/UseCurrentUser';
+import Unauthorized from '@/components/common/unauthorized';
 
 type Category = {
   id: number;
@@ -9,6 +11,7 @@ type Category = {
 };
 
 export default function BrandForm() {
+  const { isAdmin, loadingAdmin } = useCurrentUser();
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState<number | ''>('');
   const [categories, setCategories] = useState<Category[]>([]);
@@ -49,8 +52,14 @@ export default function BrandForm() {
     setLoading(false);
   };
 
+  if (loadingAdmin) return null;
+  if (!isAdmin) {
+    return <Unauthorized />;
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <h1 className="text-2xl font-bold mb-4">Nueva Marca</h1>
       <div>
         <label className="block font-medium">Nombre de la marca</label>
         <input
