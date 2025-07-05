@@ -118,11 +118,30 @@
   --navbar-foreground: oklch(1 0 0);
 }
 
+@media (max-width: 768px) {
+  body {
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+}
+
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    background-image: url('/background.png'); /* asegúrate de que esté en /public */
+    background-size:contain;
+    background-position: center;
+    background-repeat:repeat-x;
+    min-height: 100vh;
+    background-attachment: fixed;
+  }
+
+  .dark body {
+    background-image: url('/background-neg.png'); /* Imagen para modo oscuro */
   }
 }

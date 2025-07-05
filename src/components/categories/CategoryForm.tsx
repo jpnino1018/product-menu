@@ -36,7 +36,7 @@ export default function CategoryForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-card p-6 rounded shadow-md">
       <h1 className="text-2xl font-bold mb-4">Nueva Categoría</h1>
       <div>
         <label className="block font-medium">Nombre</label>

@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { MoreVertical } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/UseCurrentUser';
+import { getPublicUrl } from '@/lib/supabase/storage';
 
 export function ProductItem({
   product,
@@ -49,9 +50,9 @@ export function ProductItem({
     <Card className="relative w-full max-w-xs mx-auto shadow-md border rounded-lg overflow-hidden">
       {/* Imagen principal */}
       {product.image && (
-        <div className="relative w-full h-48 bg-white">
+        <div className="relative w-full h-48">
           <Image
-            src={product.image}
+            src={getPublicUrl(product.image)}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 300px"

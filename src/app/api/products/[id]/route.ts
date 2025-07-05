@@ -3,9 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { deleteImage } from '@/lib/supabase/storage';
 import { isAdminRequest } from '@/lib/auth';
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = parseInt(params.id);
-
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
   }
@@ -24,9 +26,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     if (product.image) {
       const deleted = await deleteImage(product.image);
       if (deleted) {
-        console.log(`Imagen eliminada en Supabase: ${product.image}`);
+        console.log(`Imagen eliminada de Supabase: ${product.image}`);
       } else {
-        console.warn(`No se pudo eliminar la imagen de Supabase`);
+        console.warn('No se pudo eliminar la imagen de Supabase');
       }
     }
 
@@ -38,7 +40,6 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return NextResponse.json({ error: 'Error interno' }, { status: 500 });
   }
 }
-
 
 export async function GET(req: NextRequest, context: { params: { id: string } }) {
   const id = parseInt(context.params.id);
@@ -61,8 +62,11 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
   }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
-  const id = parseInt(context.params.id);
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const id = parseInt(params.id);
   if (isNaN(id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
   }

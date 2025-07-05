@@ -65,7 +65,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
       e.preventDefault();
       setLoading(true);
 
-      let imageUrl = imagePreview;
+      let imagePath = imagePreview;
 
       if (file) {
         const uploadedPath = await uploadImage(file);
@@ -75,7 +75,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
           return;
         }
 
-        imageUrl = getPublicUrl(uploadedPath);
+        imagePath = uploadedPath;
       }
       const method = isEdit ? 'PUT' : 'POST';
       const endpoint = isEdit ? `/api/products/${initialData?.id}` : '/api/products';
@@ -86,7 +86,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
         body: JSON.stringify({
           name,
           price: parseFloat(price),
-          image: imageUrl,
+          image: imagePath,
           categoryId: parseInt(categoryId),
           brandId: parseInt(brandId),
         }),
@@ -106,8 +106,8 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
 
   return (
     
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h1 className="text-2xl font-bold mb-4">Nuevo Producto</h1>
+    <form onSubmit={handleSubmit} className="space-y-4 p-6 bg-card rounded shadow-md">
+      <h1 className="text-2xl font-bold mb-4">Producto</h1>
       <div>
         <label className="block font-medium">Nombre</label>
         <input
@@ -181,7 +181,7 @@ export default function ProductForm({ initialData, isEdit = false }: ProductForm
           className="w-full border px-3 py-2 rounded"
         />
         {imagePreview && !file && (
-          <img src={imagePreview} alt="Vista previa" className="w-24 mt-2" />
+          <img src={getPublicUrl(imagePreview)} alt="Vista previa" className="w-24 mt-2" />
         )}
         {file && (
           <img src={URL.createObjectURL(file)} alt="Vista previa" className="w-24 mt-2" />

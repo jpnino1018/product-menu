@@ -15,7 +15,7 @@ export default async function HomePage() {
 
   return (
     <main className="p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-center mb-4 bg-navbar p-4 rounded-lg">
         <Image
           src="/licores-mercastillosf.png"
           alt="Logo Mercastillo"
@@ -24,8 +24,6 @@ export default async function HomePage() {
           priority
         />
       </div>
-
-      <p className="mb-4">Total de productos: {products.length}</p>
 
       <ProductListWithFilters
         products={products}

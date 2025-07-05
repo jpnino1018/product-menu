@@ -1,18 +1,23 @@
-// src/app/edit/[id]/page.tsx
 import ProductForm from '@/components/products/ProductForm';
 import { prisma } from '@/lib/prisma';
 
-type EditProductPageProps = {
+export default async function EditProductPage({
+  params,
+}: {
   params: { id: string };
-};
+}) {
+  const id = parseInt(params.id);
 
-export default async function EditProductPage({ params }: EditProductPageProps) {
+  if (isNaN(id)) {
+    return <p>ID inválido</p>;
+  }
+
   const product = await prisma.product.findUnique({
-    where: { id: Number(params.id) },
+    where: { id },
   });
 
   if (!product) {
-    return <div className="p-6">Producto no encontrado</div>;
+    return <p>Producto no encontrado</p>;
   }
 
   return (
